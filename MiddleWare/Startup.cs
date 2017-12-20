@@ -24,7 +24,27 @@ namespace MiddleWare
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.Map("/test", appTest =>
+            {
+                appTest.Run(async (context) =>
+                {
+                    await context.Response.WriteAsync("this is tets Map");
+                });
+            });
+            app.Use(async (context, next) =>
+            {
+                await context.Response.WriteAsync("1");
+                await next.Invoke();
+            });
 
+            app.Use((next) =>
+            {
+                return (context) =>
+                {
+                    context.Response.WriteAsync("2");
+                    return next(context);
+                };
+            });
             app.Run(async (context) =>
             {
                 await context.Response.WriteAsync("Hello World!");
